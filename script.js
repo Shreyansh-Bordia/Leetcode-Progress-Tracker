@@ -1,10 +1,3 @@
-// Hardcoded users
-const USERS = {
-    'admin': { password: 'admin', role: 'admin' },
-    'shiwangi': { password: 'shiwangi', role: 'user' },
-    'nishita': { password: 'nishita', role: 'user' }
-};
-
 // DOM Elements
 const loginPage = document.getElementById('login-page');
 const adminDashboard = document.getElementById('admin-dashboard');
@@ -28,38 +21,95 @@ const completedQuestionsDiv = document.getElementById('completed-questions');
 let questionsRef;
 let progressRef;
 let currentUser = null;
-let listenerActive = false;
+let currentUserName = null;
+let currentUserRole = null;
+
+function isAdmin(email) {
+    return email === 'shreyansh.is21@bmsce.ac.in';
+}
+
+// Function to get username from email
+function getUsernameFromEmail(email) {
+    if (!email) return 'user';
+    // Remove @domain.com to get username
+    const username = email.split('.')[0];
+    return username;
+}
 
 // Initialize Firebase listeners
 function initFirebase() {
-    if (questionsRef) {
-        questionsRef.off();
-        console.log('Removed existing Firebase listener');
-    }
+    // Listen for auth state changes
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // User is signed in
+            currentUser = user;
+            const email = user.email;
+            currentUserName = getUsernameFromEmail(email);
+            currentUserRole = isAdmin(email) ? 'admin' : 'user';
+            
+            console.log('User signed in:', email, 'Role:', currentUserRole);
+            
+            // Save to localStorage
+            localStorage.setItem('currentUserEmail', email);
+            localStorage.setItem('currentUserName', currentUserName);
+            localStorage.setItem('currentUserRole', currentUserRole);
+            
+            // Show appropriate dashboard
+            if (currentUserRole === 'admin') {
+                showAdminDashboard(currentUserName);
+            } else {
+                showUserDashboard(currentUserName);
+            }
+            
+            // Initialize Firebase refs
+            questionsRef = db.ref('questions');
+            progressRef = db.ref('progress');
+            
+            // Setup listener for questions
+            setupFirebaseListeners();
+            
+            // Load initial data
+            getQuestionsFromFirebase((questions) => {
+                if (currentUserRole === 'admin') {
+                    loadAdminQuestions(questions);
+                    loadUserProgress(questions);
+                } else {
+                    loadUserQuestions(currentUserName, questions);
+                }
+            });
+        } else {
+            // User is signed out
+            currentUser = null;
+            currentUserName = null;
+            currentUserRole = null;
+            localStorage.removeItem('currentUserEmail');
+            localStorage.removeItem('currentUserName');
+            localStorage.removeItem('currentUserRole');
+            showLoginPage();
+        }
+    });
+    
+    // Initialize Firebase refs (will be set properly when user logs in)
     questionsRef = db.ref('questions');
     progressRef = db.ref('progress');
-    
-    let isProcessing = false;
+}
 
+// Setup Firebase listeners
+function setupFirebaseListeners() {
+    if (!questionsRef) return;
+    
+    // Remove any existing listener
+    questionsRef.off();
+    
     // Listen for real-time updates to questions
     questionsRef.on('value', (snapshot) => {
-        if (isProcessing) {
-            console.log('Already processing update, skipping...');
-            return;
-        }
-
-        isProcessing = true;
-        setTimeout(() => {
-            isProcessing = false;
-        }, 100);
-
         const questions = snapshot.val() || [];
-        if (currentUser && USERS[currentUser]) {
-            if (USERS[currentUser].role === 'admin') {
+        if (currentUser && currentUserRole) {
+            if (currentUserRole === 'admin') {
                 loadAdminQuestions(questions);
                 loadUserProgress(questions);
             } else {
-                loadUserQuestions(currentUser, questions);
+                loadUserQuestions(currentUserName, questions);
             }
         }
     });
@@ -67,6 +117,11 @@ function initFirebase() {
 
 // Get questions from Firebase
 function getQuestionsFromFirebase(callback) {
+    if (!questionsRef) {
+        callback([]);
+        return;
+    }
+    
     questionsRef.once('value')
         .then((snapshot) => {
             const questions = snapshot.val() || [];
@@ -94,6 +149,11 @@ function saveQuestionToFirebase(question) {
 
 // Get user progress from Firebase
 function getUserProgressFromFirebase(username, callback) {
+    if (!progressRef) {
+        callback([]);
+        return;
+    }
+    
     progressRef.child(username).once('value')
         .then((snapshot) => {
             const progress = snapshot.val() || [];
@@ -198,7 +258,7 @@ function deleteQuestion(questionId) {
                     console.log('Progress data cleaned up');
                     
                     // Refresh admin view if needed
-                    if (currentUser && USERS[currentUser].role === 'admin') {
+                    if (currentUserRole === 'admin') {
                         getQuestionsFromFirebase(loadAdminQuestions);
                         getQuestionsFromFirebase(loadUserProgress);
                     }
@@ -245,12 +305,12 @@ async function loadUserProgress(questions) {
         </div>
         
         <!-- Nishita's Progress -->
-        <div id="progress-nishita" class="progress-item">
+        <div id="progress-nishitah" class="progress-item">
             <div class="progress-header">
-                <span class="progress-username">nishita</span>
-                <span class="progress-count" id="count-nishita">0/${questionsArray.length} completed</span>
+                <span class="progress-username">nishitah</span>
+                <span class="progress-count" id="count-nishitah">0/${questionsArray.length} completed</span>
             </div>
-            <div id="questions-nishita" class="progress-questions">
+            <div id="questions-nishitah" class="progress-questions">
                 <!-- Questions will be inserted here -->
             </div>
         </div>
@@ -286,7 +346,7 @@ async function loadUserProgress(questions) {
     
     // Update both users
     await updateUser('shiwangi');
-    await updateUser('nishita');
+    await updateUser('nishitah');
 }
 
 // Load questions for regular user
@@ -430,9 +490,9 @@ function addQuestion() {
     const newQuestion = {
         name,
         link,
-        addedBy: currentUser,
+        addedBy: currentUserName,
         addedDate: new Date().toISOString(),
-        difficulty: document.getElementById('question-difficulty')?.value || 'Medium',
+        difficulty: document.getElementById('question-difficulty')?.value || 'Easy',
         tags: document.getElementById('question-tags')?.value.split(',').map(tag => tag.trim()) || []
     };
 
@@ -442,42 +502,24 @@ function addQuestion() {
 
 // Login function
 function login() {
-    const username = usernameInput.value.trim();
+    const email = usernameInput.value.trim();
     const password = passwordInput.value.trim();
 
-    if (!username || !password) {
-        alert('Please enter both username and password');
+    if (!email || !password) {
+        alert('Please enter both email and password');
         return;
     }
 
-    const user = USERS[username];
-
-    if (!user || user.password !== password) {
-        alert('Invalid username or password');
-        return;
-    }
-
-    currentUser = username;
-
-    localStorage.setItem('currentUser', username);
-    localStorage.setItem('userRole', user.role);
-
-    // Show appropriate dashboard
-    if (user.role === 'admin') {
-        showAdminDashboard(username);
-    } else {
-        showUserDashboard(username);
-    }
-
-    // Get initial data
-    getQuestionsFromFirebase((questions) => {
-        if (user.role === 'admin') {
-            loadAdminQuestions(questions);
-            loadUserProgress(questions);
-        } else {
-            loadUserQuestions(username, questions);
-        }
-    });
+    // Sign in with Firebase Auth
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Signed in successfully - handled by auth state listener
+            console.log('Login successful for:', email);
+        })
+        .catch((error) => {
+            console.error('Login error:', error);
+            alert('Login failed. Please check your email and password.');
+        });
 }
 
 // Show/Hide functions (same as before)
@@ -487,7 +529,6 @@ function showLoginPage() {
     userDashboard.classList.add('hidden');
     usernameInput.value = '';
     passwordInput.value = '';
-    currentUser = null;
 }
 
 function showAdminDashboard(username) {
@@ -506,16 +547,14 @@ function showUserDashboard(username) {
 
 // Logout function
 function logout() {
-    if (questionsRef) {
-        questionsRef.off();
-        console.log('Cleaned up Firebase listener on logout');
-    }
-
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userRole');
-
-    currentUser = null;
-    showLoginPage();
+    auth.signOut()
+        .then(() => {
+            console.log('User signed out');
+            showLoginPage();
+        })
+        .catch((error) => {
+            console.error('Logout error:', error);
+        });
 }
 
 // Event Listeners
@@ -539,32 +578,7 @@ function init() {
 
     initFirebase();
     
-    // Check if user was previously logged in
-    const savedUser = localStorage.getItem('currentUser');
-    const savedRole = localStorage.getItem('userRole');
-
-    if (savedUser && savedRole && USERS[savedUser]) {
-
-        currentUser = savedUser;
-
-        if (savedRole === 'admin') {
-            showAdminDashboard(savedUser);
-        } else {
-            showUserDashboard(savedUser);
-        }
-        
-        // Load data
-        getQuestionsFromFirebase((questions) => {
-            if (savedRole === 'admin') {
-                loadAdminQuestions(questions);
-                loadUserProgress(questions);
-            } else {
-                loadUserQuestions(savedUser, questions);
-            }
-        });
-    } else {
-        showLoginPage();
-    }
+    showLoginPage();
 }
 
 // Start the application

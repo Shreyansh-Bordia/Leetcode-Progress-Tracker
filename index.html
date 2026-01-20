@@ -1,0 +1,151 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div id="login-page" class="page">
+        <div class="login-container">
+            <div class="logo-header">
+                <i class="fas fa-code"></i>
+                <h1>LeetCode Tracker</h1>
+                <p>Track your coding progress efficiently</p>
+            </div>
+            
+            <div class="login-form">
+                <h2>Sign In</h2>
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                <button id="login-btn" class="btn-login">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="page hidden">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-code"></i>
+                <span>Admin Dashboard</span>
+            </div>
+            <div class="nav-user">
+                <span id="admin-username"></span>
+                <button id="admin-logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-tasks"></i> Manage LeetCode Questions</h1>
+                <p>Add questions and track user progress</p>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <h2><i class="fas fa-plus-circle"></i> Add New Question</h2>
+                        <div class="form-group">
+                            <label for="question-name">Question Name</label>
+                            <input type="text" id="question-name" placeholder="e.g., Two Sum">
+                        </div>
+                        <div class="form-group">
+                            <label for="question-link">LeetCode Link</label>
+                            <input type="text" id="question-link" placeholder="https://leetcode.com/problems/two-sum/">
+                        </div>
+                        <div class="form-group">
+                            <label for="question-difficulty">Difficulty</label>
+                            <select id="question-difficulty">
+                                <option value="Easy">Easy</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="question-tags">Tags (comma separated)</label>
+                            <input type="text" id="question-tags" placeholder="Array, Hash Table, Two Pointers">
+                        </div>
+                        <button id="add-question-btn" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Question
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <h2><i class="fas fa-list"></i> All Questions</h2>
+                        <div id="admin-questions-list" class="questions-list">
+                            <!-- Questions will be added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <h2><i class="fas fa-chart-bar"></i> User Progress</h2>
+                        <div id="user-progress">
+                            <!-- User progress will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-dashboard" class="page hidden">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-code"></i>
+                <span>LeetCode Tracker</span>
+            </div>
+            <div class="nav-user">
+                <span id="user-username"></span>
+                <button id="user-logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-tasks"></i> My LeetCode Progress</h1>
+                <p>Track and solve coding questions</p>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <h2 class="card-title-todo"><i class="fas fa-clock"></i> To Do</h2>
+                        <div id="todo-questions" class="questions-list">
+                            <!-- To-do questions will be added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <h2 class="card-title-completed"><i class="fas fa-check-circle"></i> Completed</h2>
+                        <div id="completed-questions" class="questions-list">
+                            <!-- Completed questions will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

@@ -491,6 +491,296 @@ body {
     animation: pulse 2s infinite;
 }
 
+/* Additional Resources Section */
+.question-resources {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e5e7eb;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: #f3f4f6;
+    border-radius: 6px;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.3s;
+    border: 1px solid #e5e7eb;
+}
+
+.resource-link:hover {
+    background: #2563eb;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resource-link.video {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.resource-link.video:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.resource-link.notes {
+    background: #f0f9ff;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+.resource-link.notes:hover {
+    background: #0369a1;
+    color: white;
+}
+
+.resource-link.solution {
+    background: #f0fdf4;
+    color: #059669;
+    border-color: #bbf7d0;
+}
+
+.resource-link.solution:hover {
+    background: #059669;
+    color: white;
+}
+
+.resource-link i {
+    font-size: 0.9rem;
+}
+
+/* Admin question item with resources */
+.admin-resources {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.admin-resource {
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.admin-resource i {
+    margin-right: 0.25rem;
+}
+
+/* Resource labels */
+.resource-label {
+    font-weight: 600;
+    color: #374151;
+    margin-right: 0.5rem;
+}
+
+/* Daily Progress Tracker - Simplified */
+.today-progress {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border: 2px solid #bae6fd;
+}
+
+.today-progress h3 {
+    color: #0369a1;
+    margin-bottom: 1rem;
+}
+
+.today-progress small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.today-date {
+    margin-top: 0.5rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Stats Grid */
+.progress-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .progress-stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stat-box {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid #e5e7eb;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Calendar Styles - Simplified */
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.btn-icon {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.btn-icon:hover {
+    background: var(--secondary-color);
+}
+
+#current-month {
+    margin: 0;
+    color: var(--dark-color);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.25rem;
+    background: #f8fafc;
+    border: 2px solid transparent;
+}
+
+.calendar-day:hover {
+    background: #e2e8f0;
+}
+
+.calendar-day.empty {
+    background: transparent;
+    cursor: default;
+}
+
+.calendar-day.today {
+    border: 2px solid var(--primary-color);
+    background: white;
+    font-weight: 600;
+}
+
+.calendar-day.completed {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+.calendar-day.missed {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+    opacity: 0.7;
+}
+
+.calendar-day.future {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.day-number {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.day-count {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.streak-info {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 2px solid #fbbf24;
+    margin-top: 1rem;
+}
+
+.streak-info h4 {
+    color: #92400e;
+    margin-bottom: 0.5rem;
+}
+
+#current-streak {
+    color: #ea580c;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+#streak-message {
+    color: #92400e;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Streak animation */
+@keyframes streakPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.streak-high {
+    animation: streakPulse 2s infinite;
+    color: #ea580c !important;
+}
+
 @keyframes pulse {
     0% { opacity: 1; }
     50% { opacity: 0.5; }
@@ -517,5 +807,30 @@ body {
     
     .login-form {
         padding: 1.5rem;
+    }
+}
+
+/* Desktop view - make calendar days smaller */
+@media (min-width: 769px) {
+    .calendar-grid {
+        max-width: 700px;
+        margin: 0 auto;
+        gap: 0.4rem;
+    }
+
+    .calendar-day {
+        aspect-ratio: auto;
+        height: 70px;
+        font-size: 0.8rem;
+        padding: 0.2rem;
+    }
+
+    .day-number {
+        font-size: 0.85rem;
+        margin-bottom: 0.15rem;
+    }
+
+    .day-count {
+        font-size: 0.7rem;
     }
 }

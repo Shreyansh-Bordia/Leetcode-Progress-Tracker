@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,7 +56,7 @@
                 <h1><i class="fas fa-tasks"></i> Manage LeetCode Questions</h1>
                 <p>Add questions and track user progress</p>
             </div>
-
+            
             <div class="row">
                 <div class="col">
                     <div class="card">
@@ -70,14 +72,26 @@
                         <div class="form-group">
                             <label for="question-difficulty">Difficulty</label>
                             <select id="question-difficulty">
-                                <option value="Easy">Easy</option>
-                                <option value="Medium" selected>Medium</option>
+                                <option value="Easy" selected>Easy</option>
+                                <option value="Medium">Medium</option>
                                 <option value="Hard">Hard</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="question-tags">Tags (comma separated)</label>
                             <input type="text" id="question-tags" placeholder="Array, Hash Table, Two Pointers">
+                        </div>
+                        <div class="form-group">
+                            <label for="question-video">Topic Video Explanation Link</label>
+                            <input type="text" id="question-video" placeholder="https://youtube.com/... (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="question-notes">Topic Notes/Article Link</label>
+                            <input type="text" id="question-notes" placeholder="https://medium.com/... (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="question-solution">Question Solution Link</label>
+                            <input type="text" id="question-solution" placeholder="https://github.com/... (optional)">
                         </div>
                         <button id="add-question-btn" class="btn-primary">
                             <i class="fas fa-plus"></i> Add Question
@@ -125,13 +139,77 @@
             <div class="row">
                 <div class="col">
                     <div class="card">
+                        <h2><i class="fas fa-calendar-day"></i> Daily Progress Tracker</h2>
+                        
+                        <!-- Today's Progress -->
+                        <div class="today-progress">
+                            <h3><i class="fas fa-sun"></i> Today's Progress</h3>
+                            <div class="form-group">
+                                <label for="today-count">Questions solved today</label>
+                                <input type="number" id="today-count" min="0" max="50" value="0" placeholder="0">
+                                <small>Enter total questions solved today (any source)</small>
+                            </div>
+                            <button id="save-daily-progress" class="btn-primary">
+                                <i class="fas fa-save"></i> Save Today's Progress
+                            </button>
+                            <p class="today-date"><small>Date: <span id="current-date"></span></small></p>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="progress-stats">
+                            <div class="stat-box">
+                                <div class="stat-value" id="today-stat">0</div>
+                                <div class="stat-label">Today</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="streak-stat">0</div>
+                                <div class="stat-label">Day Streak</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="month-total">0</div>
+                                <div class="stat-label">This Month</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="all-time">0</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <h2><i class="fas fa-calendar-alt"></i> Daily Tracker</h2>
+                        <div class="calendar-controls">
+                            <button id="prev-month" class="btn-icon"><i class="fas fa-chevron-left"></i></button>
+                            <h4 id="current-month">January 2026</h4>
+                            <button id="next-month" class="btn-icon"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- Calendar days will be generated here -->
+                        </div>
+                        <div class="streak-info">
+                            <h4><i class="fas fa-fire"></i> Current Streak: <span id="current-streak">0</span> days</h4>
+                            <p id="streak-message">Keep going! Solve at least 1 question daily.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
                         <h2 class="card-title-todo"><i class="fas fa-clock"></i> To Do</h2>
                         <div id="todo-questions" class="questions-list">
                             <!-- To-do questions will be added here -->
                         </div>
                     </div>
                 </div>
-
+            </div>
+            <br><br>
+            <div class="row">
                 <div class="col">
                     <div class="card">
                         <h2 class="card-title-completed"><i class="fas fa-check-circle"></i> Completed</h2>

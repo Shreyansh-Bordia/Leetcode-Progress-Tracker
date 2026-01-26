@@ -1056,6 +1056,298 @@ function login() {
         });
 }
 
+// Tab Navigation Functionality
+function initTabNavigation() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            
+            // Update active tab button
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show active tab content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `${tabId}-tab`) {
+                    content.classList.add('active');
+                }
+            });
+            
+            // If switching to questions tab, ensure questions are loaded
+            if (tabId === 'questions' && currentUserName && questionsRef) {
+                getQuestionsFromFirebase((questions) => {
+                    loadUserQuestions(currentUserName, questions);
+                });
+            }
+
+            if (tabId === 'dashboard' && currentUserName) {
+                initDailyProgress(currentUserName);
+            }
+        });
+    });
+}
+
+// Bill Calculator Functionality
+function initBillCalculator() {
+    // Only show bill tab if user is shiwangi
+    if (currentUserName === 'shiwangi') {
+        document.getElementById('bill-tab-btn').classList.remove('hidden');
+    }
+    
+    // Calculate Bill Button
+    const calculateBillBtn = document.getElementById('calculate-bill');
+    if (calculateBillBtn) {
+        calculateBillBtn.addEventListener('click', calculateBill);
+    }
+    
+    // Download PDF Button
+    const downloadPDFBtn = document.getElementById('download-bill-pdf');
+    if (downloadPDFBtn) {
+        downloadPDFBtn.addEventListener('click', downloadBillPDF);
+    }
+    
+    // Reset Button
+    const resetBillBtn = document.getElementById('reset-bill');
+    if (resetBillBtn) {
+        resetBillBtn.addEventListener('click', resetBillCalculator);
+    }
+}
+
+// Calculate Bill Function
+function calculateBill() {
+    // Get input values
+    const billAmount = parseFloat(document.getElementById('bill-amount').value);
+    const daysNidhi = parseInt(document.getElementById('days-nidhi').value);
+    const daysShiwangi = parseInt(document.getElementById('days-shiwangi').value);
+    
+    // Validate inputs
+    if (isNaN(billAmount) || billAmount <= 0) {
+        alert('Please enter a valid bill amount');
+        return;
+    }
+    
+    if (isNaN(daysNidhi) || daysNidhi < 0) {
+        alert('Please enter valid days for Nidhi');
+        return;
+    }
+    
+    if (isNaN(daysShiwangi) || daysShiwangi < 0) {
+        alert('Please enter valid days for Shiwangi');
+        return;
+    }
+    
+    // Calculate based on the C++ formula
+    const actualDays = Math.max(daysNidhi, daysShiwangi);
+    const perDay = billAmount / actualDays;
+    
+    let iniShiwangi, iniNidhi;
+    
+    if (daysNidhi < daysShiwangi) {
+        iniNidhi = (billAmount - (perDay * (actualDays - daysNidhi))) / 2;
+        iniShiwangi = billAmount - iniNidhi;
+    } else {
+        iniShiwangi = (billAmount - (perDay * (actualDays - daysShiwangi))) / 2;
+        iniNidhi = billAmount - iniShiwangi;
+    }
+    
+    const perDayNidhi = iniNidhi / daysNidhi;
+    const perDayShiwangi = iniShiwangi / daysShiwangi;
+    const bestAvg = (perDayNidhi + perDayShiwangi) / 2;
+    
+    let actualNidhi, actualShiwangi;
+    
+    if (daysNidhi < daysShiwangi) {
+        actualNidhi = (billAmount - (bestAvg * (actualDays - daysNidhi))) / 2;
+        actualShiwangi = billAmount - actualNidhi;
+    } else {
+        actualShiwangi = (billAmount - (bestAvg * (actualDays - daysShiwangi))) / 2;
+        actualNidhi = billAmount - actualShiwangi;
+    }
+    
+    // Round and adjust
+    const roundedShiwangi = Math.round(actualShiwangi);
+    const roundedNidhi = Math.round(actualNidhi);
+    
+    let finalShiwangi = roundedShiwangi;
+    let finalNidhi = roundedNidhi;
+    
+    if (roundedShiwangi + roundedNidhi < billAmount) {
+        finalNidhi += (billAmount - (roundedShiwangi + roundedNidhi));
+    }
+    
+    // Update UI
+     document.getElementById('actual-days').textContent = actualDays;
+    document.getElementById('per-day-rate').textContent = `Rs. ${perDay.toFixed(2)}`;
+    document.getElementById('initial-shiwangi').textContent = `Rs. ${iniShiwangi.toFixed(2)}`;
+    document.getElementById('initial-nidhi').textContent = `Rs. ${iniNidhi.toFixed(2)}`;
+    document.getElementById('daily-shiwangi').textContent = `Rs. ${perDayShiwangi.toFixed(2)}`;
+    document.getElementById('daily-nidhi').textContent = `Rs. ${perDayNidhi.toFixed(2)}`;
+    document.getElementById('best-average').textContent = `Rs. ${bestAvg.toFixed(2)}`;
+    document.getElementById('final-shiwangi').textContent = `Rs. ${actualShiwangi.toFixed(2)}`;
+    document.getElementById('final-nidhi').textContent = `Rs. ${actualNidhi.toFixed(2)}`;
+    document.getElementById('total-check').textContent = `Rs. ${(actualShiwangi + actualNidhi).toFixed(2)}`;
+    
+    document.getElementById('summary-shiwangi').textContent = `Rs. ${finalShiwangi}`;
+    document.getElementById('summary-nidhi').textContent = `Rs. ${finalNidhi}`;
+    document.getElementById('summary-total').textContent = `Rs. ${billAmount}`;
+    
+    // Show results
+    document.getElementById('bill-results-row').classList.remove('hidden');
+    
+    // Store calculation data for PDF
+    window.billCalculationData = {
+        billAmount,
+        daysNidhi,
+        daysShiwangi,
+        actualDays,
+        perDay,
+        iniShiwangi,
+        iniNidhi,
+        perDayShiwangi,
+        perDayNidhi,
+        bestAvg,
+        actualShiwangi,
+        actualNidhi,
+        finalShiwangi,
+        finalNidhi
+    };
+}
+
+// Reset Bill Calculator
+function resetBillCalculator() {
+    document.getElementById('bill-amount').value = '';
+    document.getElementById('days-nidhi').value = '';
+    document.getElementById('days-shiwangi').value = '';
+    document.getElementById('bill-results-row').classList.add('hidden');
+    window.billCalculationData = null;
+}
+
+// Download Bill as PDF
+async function downloadBillPDF() {
+    if (!window.billCalculationData) {
+        alert('Please calculate the bill first');
+        return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    const data = window.billCalculationData;
+    const currentDate = new Date().toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    
+    const currency = 'Rs. ';
+    
+    // PDF Styling - Use basic styling without complex characters
+    doc.setFontSize(20);
+    doc.setTextColor(41, 128, 185);
+    doc.text('Bill Calculation Report', 105, 20, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated on: ${currentDate}`, 105, 28, { align: 'center' });
+    doc.text('For: Shiwangi & Nidhi', 105, 32, { align: 'center' });
+    
+    // Input Details
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Input Details:', 20, 45);
+    
+    doc.setFontSize(10);
+    doc.text(`Total Bill Amount: ${currency}${data.billAmount}`, 30, 55);
+    doc.text(`Days Nidhi available: ${data.daysNidhi} days`, 30, 60);
+    doc.text(`Days Shiwangi available: ${data.daysShiwangi} days`, 30, 65);
+    doc.text(`Total Actual Days: ${data.actualDays} days`, 30, 70);
+    doc.text(`Per Day Rate: ${currency}${data.perDay.toFixed(2)}`, 30, 75);
+    
+    // Initial Calculation
+    doc.setFontSize(12);
+    doc.text('Initial Calculation:', 20, 90);
+    
+    doc.setFontSize(10);
+    doc.text(`Initial Shiwangi Share: ${currency}${data.iniShiwangi.toFixed(2)}`, 30, 100);
+    doc.text(`Initial Nidhi Share: ${currency}${data.iniNidhi.toFixed(2)}`, 30, 105);
+    doc.text(`Shiwangi's Daily Rate: ${currency}${data.perDayShiwangi.toFixed(2)}`, 30, 110);
+    doc.text(`Nidhi's Daily Rate: ${currency}${data.perDayNidhi.toFixed(2)}`, 30, 115);
+    
+    // Best Average Calculation
+    doc.setFontSize(12);
+    doc.text('Best Average Calculation:', 20, 130);
+    
+    doc.setFontSize(10);
+    doc.text(`Best Daily Average: ${currency}${data.bestAvg.toFixed(2)}`, 30, 140);
+    doc.text(`Calculated Shiwangi Share: ${currency}${data.actualShiwangi.toFixed(2)}`, 30, 145);
+    doc.text(`Calculated Nidhi Share: ${currency}${data.actualNidhi.toFixed(2)}`, 30, 150);
+    
+    // Final Summary
+    doc.setFontSize(14);
+    doc.setTextColor(39, 174, 96);
+    doc.text('Final Bill Summary:', 20, 170);
+    
+    doc.setDrawColor(39, 174, 96);
+    doc.setLineWidth(0.5);
+    doc.line(20, 172, 190, 172);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Shiwangi pays: ${currency}${data.finalShiwangi}`, 30, 185);
+    doc.text(`Nidhi pays: ${currency}${data.finalNidhi}`, 30, 190);
+    
+    doc.setFontSize(13);
+    doc.setTextColor(41, 128, 185);
+    doc.text(`Total Bill: ${currency}${data.billAmount}`, 30, 200);
+    
+    // Add Calculation Method
+    doc.addPage();
+    doc.setFontSize(16);
+    doc.setTextColor(41, 128, 185);
+    doc.text('Calculation Method', 20, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    // Method steps with proper formatting
+    const steps = [
+        '1. Determine total actual days = max(daysNidhi, daysShiwangi)',
+        `2. Calculate per day rate = total bill / actual days`,
+        '3. Initial calculation based on availability:',
+        '   - If Nidhi has fewer days:',
+        '     iniNidhi = (billAmount - (perDay × (actualDays - daysNidhi))) / 2',
+        '     iniShiwangi = billAmount - iniNidhi',
+        '   - If Shiwangi has fewer days:',
+        '     iniShiwangi = (billAmount - (perDay × (actualDays - daysShiwangi))) / 2',
+        '     iniNidhi = billAmount - iniShiwangi',
+        '4. Calculate individual daily rates:',
+        '   perDayNidhi = iniNidhi / daysNidhi',
+        '   perDayShiwangi = iniShiwangi / daysShiwangi',
+        '5. Find best average = (perDayNidhi + perDayShiwangi) / 2',
+        '6. Final calculation using best average:',
+        '   Similar to step 3 but using best average instead of perDay',
+        '7. Round amounts and adjust to match total bill'
+    ];
+    
+    let y = 40;
+    steps.forEach(step => {
+        if (y > 270) {
+            doc.addPage();
+            y = 20;
+        }
+        doc.text(step, 20, y);
+        y += 7;
+    });
+    
+    // Save PDF
+    const fileName = `Bill_Calculation_${currentDate.replace(/\//g, '-')}.pdf`;
+    doc.save(fileName);
+}
+
 // Show/Hide functions (same as before)
 function showLoginPage() {
     loginPage.classList.remove('hidden');
@@ -1072,11 +1364,18 @@ function showAdminDashboard(username) {
     adminUsernameSpan.textContent = username;
 }
 
+// Initialize tab navigation when showing user dashboard
 function showUserDashboard(username) {
     loginPage.classList.add('hidden');
     adminDashboard.classList.add('hidden');
     userDashboard.classList.remove('hidden');
     userUsernameSpan.textContent = username;
+    
+    // Initialize tab navigation
+    setTimeout(() => {
+        initTabNavigation();
+        initBillCalculator(); // Initialize bill calculator
+    }, 100);
 }
 
 // Logout function

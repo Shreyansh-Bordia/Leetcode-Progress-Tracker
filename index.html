@@ -11,9 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <!-- PDF scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div id="login-page" class="page">
@@ -130,91 +134,240 @@
             </div>
         </nav>
 
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="tab-btn" data-tab="questions">
+                <i class="fas fa-tasks"></i> Questions
+            </button>
+            <button class="tab-btn hidden" id="bill-tab-btn" data-tab="bill">
+                <i class="fas fa-calculator"></i> Bill Calculator
+            </button>
+        </div>
+
         <div class="container">
-            <div class="dashboard-header">
-                <h1><i class="fas fa-tasks"></i> My LeetCode Progress</h1>
-                <p>Track and solve coding questions</p>
+            <!-- Dashboard Tab Content -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="dashboard-header">
+                    <h1><i class="fas fa-tachometer-alt"></i> My Dashboard</h1>
+                    <p>Track your daily coding progress</p>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <h2><i class="fas fa-calendar-day"></i> Daily Progress Tracker</h2>
+                            
+                            <!-- Today's Progress -->
+                            <div class="today-progress">
+                                <h3><i class="fas fa-sun"></i> Today's Progress</h3>
+                                <div class="form-group">
+                                    <label for="today-count">Questions solved today</label>
+                                    <input type="number" id="today-count" min="0" max="50" value="0" placeholder="0">
+                                    <small>Enter total questions solved today (any source)</small>
+                                </div>
+                                <button id="save-daily-progress" class="btn-primary">
+                                    <i class="fas fa-save"></i> Save Today's Progress
+                                </button>
+                                <p class="today-date"><small>Date: <span id="current-date"></span></small></p>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="progress-stats">
+                                <div class="stat-box">
+                                    <div class="stat-value" id="today-stat">0</div>
+                                    <div class="stat-label">Today</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="streak-stat">0</div>
+                                    <div class="stat-label">Day Streak</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="month-total">0</div>
+                                    <div class="stat-label">This Month</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="all-time">0</div>
+                                    <div class="stat-label">Total</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <h2><i class="fas fa-calendar-alt"></i> Daily Tracker</h2>
+                            <div class="calendar-controls">
+                                <button id="prev-month" class="btn-icon"><i class="fas fa-chevron-left"></i></button>
+                                <h4 id="current-month">January 2026</h4>
+                                <button id="next-month" class="btn-icon"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid">
+                                <!-- Calendar days will be generated here -->
+                            </div>
+                            <div class="streak-info">
+                                <h4><i class="fas fa-fire"></i> Current Streak: <span id="current-streak">0</span> days</h4>
+                                <p id="streak-message">Keep going! Solve at least 1 question daily.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <h2><i class="fas fa-calendar-day"></i> Daily Progress Tracker</h2>
-                        
-                        <!-- Today's Progress -->
-                        <div class="today-progress">
-                            <h3><i class="fas fa-sun"></i> Today's Progress</h3>
+            <!-- Questions Tab Content -->
+            <div id="questions-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h1><i class="fas fa-tasks"></i> Questions</h1>
+                    <p>Track and solve LeetCode questions</p>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <h2 class="card-title-todo"><i class="fas fa-clock"></i> To Do</h2>
+                            <div id="todo-questions" class="questions-list">
+                                <!-- To-do questions will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <h2 class="card-title-completed"><i class="fas fa-check-circle"></i> Completed</h2>
+                            <div id="completed-questions" class="questions-list">
+                                <!-- Completed questions will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bill Calculator Tab Content - Only for shiwangi -->
+            <div id="bill-tab" class="tab-content">
+                <div class="dashboard-header">
+                    <h1><i class="fas fa-calculator"></i> Bill Calculator</h1>
+                    <p>Calculate and split bills with Nidhi</p>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <h2><i class="fas fa-receipt"></i> Bill Input</h2>
+                            
                             <div class="form-group">
-                                <label for="today-count">Questions solved today</label>
-                                <input type="number" id="today-count" min="0" max="50" value="0" placeholder="0">
-                                <small>Enter total questions solved today (any source)</small>
+                                <label for="bill-amount">Total Bill Amount (₹)</label>
+                                <input type="number" id="bill-amount" placeholder="Enter total bill amount" min="0" step="0.01">
                             </div>
-                            <button id="save-daily-progress" class="btn-primary">
-                                <i class="fas fa-save"></i> Save Today's Progress
+                            
+                            <div class="form-group">
+                                <label for="days-nidhi">Days Nidhi was available</label>
+                                <input type="number" id="days-nidhi" placeholder="Enter days Nidhi was there" min="0" max="31">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="days-shiwangi">Days Shiwangi was available</label>
+                                <input type="number" id="days-shiwangi" placeholder="Enter days Shiwangi was there" min="0" max="31">
+                            </div>
+                            
+                            <button id="calculate-bill" class="btn-primary">
+                                <i class="fas fa-calculator"></i> Calculate Bill
                             </button>
-                            <p class="today-date"><small>Date: <span id="current-date"></span></small></p>
-                        </div>
-
-                        <!-- Stats -->
-                        <div class="progress-stats">
-                            <div class="stat-box">
-                                <div class="stat-value" id="today-stat">0</div>
-                                <div class="stat-label">Today</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-value" id="streak-stat">0</div>
-                                <div class="stat-label">Day Streak</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-value" id="month-total">0</div>
-                                <div class="stat-label">This Month</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-value" id="all-time">0</div>
-                                <div class="stat-label">Total</div>
-                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <br><br>
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <h2><i class="fas fa-calendar-alt"></i> Daily Tracker</h2>
-                        <div class="calendar-controls">
-                            <button id="prev-month" class="btn-icon"><i class="fas fa-chevron-left"></i></button>
-                            <h4 id="current-month">January 2026</h4>
-                            <button id="next-month" class="btn-icon"><i class="fas fa-chevron-right"></i></button>
-                        </div>
-                        <div class="calendar-grid" id="calendar-grid">
-                            <!-- Calendar days will be generated here -->
-                        </div>
-                        <div class="streak-info">
-                            <h4><i class="fas fa-fire"></i> Current Streak: <span id="current-streak">0</span> days</h4>
-                            <p id="streak-message">Keep going! Solve at least 1 question daily.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br><br>
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <h2 class="card-title-todo"><i class="fas fa-clock"></i> To Do</h2>
-                        <div id="todo-questions" class="questions-list">
-                            <!-- To-do questions will be added here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br><br>
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <h2 class="card-title-completed"><i class="fas fa-check-circle"></i> Completed</h2>
-                        <div id="completed-questions" class="questions-list">
-                            <!-- Completed questions will be added here -->
+                <br><br>
+                
+                <!-- Results Section -->
+                <div class="row hidden" id="bill-results-row">
+                    <div class="col">
+                        <div class="card">
+                            <h2><i class="fas fa-file-invoice-dollar"></i> Bill Calculation Results</h2>
+                            
+                            <div class="bill-results">
+                                <!-- Initial Calculation -->
+                                <div class="bill-section">
+                                    <h3><i class="fas fa-calculator"></i> Initial Calculation</h3>
+                                    <div class="bill-result-item">
+                                        <span>Total Actual Days:</span>
+                                        <span id="actual-days"></span>
+                                    </div>
+                                    <div class="bill-result-item">
+                                        <span>Per Day Rate:</span>
+                                        <span id="per-day-rate"></span>
+                                    </div>
+                                    <div class="bill-result-item">
+                                        <span>Initial Shiwangi Share:</span>
+                                        <span id="initial-shiwangi"></span>
+                                    </div>
+                                    <div class="bill-result-item">
+                                        <span>Initial Nidhi Share:</span>
+                                        <span id="initial-nidhi"></span>
+                                    </div>
+                                    <div class="bill-result-item">
+                                        <span>Shiwangi's Daily Rate:</span>
+                                        <span id="daily-shiwangi"></span>
+                                    </div>
+                                    <div class="bill-result-item">
+                                        <span>Nidhi's Daily Rate:</span>
+                                        <span id="daily-nidhi"></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Best Average Calculation -->
+                                <div class="bill-section">
+                                    <h3><i class="fas fa-balance-scale"></i> Best Average Calculation</h3>
+                                    <div class="bill-result-item">
+                                        <span>Best Daily Average:</span>
+                                        <span id="best-average"></span>
+                                    </div>
+                                    <div class="bill-result-item">
+                                        <span>Final Shiwangi Share:</span>
+                                        <span id="final-shiwangi"></span>
+                                    </div>
+                                    <div class="bill-result-item">
+                                        <span>Final Nidhi Share:</span>
+                                        <span id="final-nidhi"></span>
+                                    </div>
+                                    <div class="bill-result-item highlight">
+                                        <span>Total Check:</span>
+                                        <span id="total-check"></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Summary -->
+                                <div class="bill-section summary">
+                                    <h3><i class="fas fa-file-invoice"></i> Final Bill Summary</h3>
+                                    <div class="bill-final-summary">
+                                        <div class="final-amount">
+                                            <span>Shiwangi pays:</span>
+                                            <span class="amount" id="summary-shiwangi"></span>
+                                        </div>
+                                        <div class="final-amount">
+                                            <span>Nidhi pays:</span>
+                                            <span class="amount" id="summary-nidhi"></span>
+                                        </div>
+                                        <div class="final-amount total">
+                                            <span>Total Bill:</span>
+                                            <span class="amount" id="summary-total"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bill-actions">
+                                <button id="download-bill-pdf" class="btn-primary">
+                                    <i class="fas fa-download"></i> Download Bill as PDF
+                                </button>
+                                <button id="reset-bill" class="btn-secondary">
+                                    <i class="fas fa-redo"></i> Reset Calculator
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

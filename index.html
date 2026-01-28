@@ -1,381 +1,1355 @@
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #3b82f6;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --dark-color: #1f2937;
+    --light-color: #f9fafb;
+    --gray-color: #6b7280;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeetCode Tracker</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: var(--dark-color);
+    overflow-x: hidden;
+}
+
+.page {
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Login Page */
+.login-container {
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: white;
+}
+
+.logo-header i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.logo-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.logo-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.login-form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+}
+
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--dark-color);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.form-group label i {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+}
+
+.btn-login:hover {
+    background: var(--secondary-color);
+}
+
+/* Navbar */
+.navbar {
+    background: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.nav-brand i {
+    color: var(--primary-color);
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-user span {
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.btn-logout {
+    padding: 0.5rem 1rem;
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-logout:hover {
+    background: #dc2626;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dashboard-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Cards */
+.row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.card h2 {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.card-title-todo {
+    color: var(--danger-color) !important;
+    border-bottom-color: var(--danger-color) !important;
+}
+
+.card-title-completed {
+    color: var(--success-color) !important;
+    border-bottom-color: var(--success-color) !important;
+}
+
+/* Questions List */
+.questions-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.question-item {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.question-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.question-item.todo {
+    border-left: 4px solid var(--danger-color);
+}
+
+.question-item.completed {
+    border-left: 4px solid var(--success-color);
+    opacity: 0.8;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.question-title {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 1.1rem;
+}
+
+.question-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.question-title a:hover {
+    color: var(--primary-color);
+}
+
+.question-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+}
+
+/* User Progress */
+.progress-item {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-username {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.progress-count {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+}
+
+.progress-questions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.progress-question {
+    background: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    border: 1px solid #e5e7eb;
+}
+
+.progress-question.completed {
+    background: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--gray-color);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+}
+
+/* Difficulty badges */
+.difficulty {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-left: 0.5rem;
+    font-weight: 600;
+}
+
+.difficulty.easy {
+    background-color: #10b981;
+    color: white;
+}
+
+.difficulty.medium {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.difficulty.hard {
+    background-color: #ef4444;
+    color: white;
+}
+
+/* Question tags */
+.question-tags {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+/* Delete button */
+.btn-delete {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+}
+
+/* Additional form fields */
+.form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Additional Resources Section */
+.question-resources {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e5e7eb;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: #f3f4f6;
+    border-radius: 6px;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.3s;
+    border: 1px solid #e5e7eb;
+}
+
+.resource-link:hover {
+    background: #2563eb;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resource-link.video {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.resource-link.video:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.resource-link.notes {
+    background: #f0f9ff;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+.resource-link.notes:hover {
+    background: #0369a1;
+    color: white;
+}
+
+.resource-link.solution {
+    background: #f0fdf4;
+    color: #059669;
+    border-color: #bbf7d0;
+}
+
+.resource-link.solution:hover {
+    background: #059669;
+    color: white;
+}
+
+.resource-link i {
+    font-size: 0.9rem;
+}
+
+/* Admin question item with resources */
+.admin-resources {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.admin-resource {
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.admin-resource i {
+    margin-right: 0.25rem;
+}
+
+/* Resource labels */
+.resource-label {
+    font-weight: 600;
+    color: #374151;
+    margin-right: 0.5rem;
+}
+
+/* Daily Progress Tracker - Simplified */
+.today-progress {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border: 2px solid #bae6fd;
+}
+
+.today-progress h3 {
+    color: #0369a1;
+    margin-bottom: 1rem;
+}
+
+.today-progress small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.today-date {
+    margin-top: 0.5rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Stats Grid */
+.progress-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .progress-stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stat-box {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid #e5e7eb;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Calendar Styles - Simplified */
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.btn-icon {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.btn-icon:hover {
+    background: var(--secondary-color);
+}
+
+#current-month {
+    margin: 0;
+    color: var(--dark-color);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.25rem;
+    background: #f8fafc;
+    border: 2px solid transparent;
+}
+
+.calendar-day:hover {
+    background: #e2e8f0;
+}
+
+.calendar-day.empty {
+    background: transparent;
+    cursor: default;
+}
+
+.calendar-day.today {
+    border: 2px solid var(--primary-color);
+    background: white;
+    font-weight: 600;
+}
+
+.calendar-day.completed {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+.calendar-day.missed {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+    opacity: 0.7;
+}
+
+.calendar-day.future {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.day-number {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.day-count {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.streak-info {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 2px solid #fbbf24;
+    margin-top: 1rem;
+}
+
+.streak-info h4 {
+    color: #92400e;
+    margin-bottom: 0.5rem;
+}
+
+#current-streak {
+    color: #ea580c;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+#streak-message {
+    color: #92400e;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Streak animation */
+@keyframes streakPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.streak-high {
+    animation: streakPulse 2s infinite;
+    color: #ea580c !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    .row {
+        grid-template-columns: 1fr;
+    }
+    
+    .navbar {
+        padding: 1rem;
+    }
+    
+    .login-container {
+        padding: 1rem;
+    }
+    
+    .login-form {
+        padding: 1.5rem;
+    }
+}
 
-    <!-- PDF scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
-<body>
-    <div id="login-page" class="page">
-        <div class="login-container">
-            <div class="logo-header">
-                <i class="fas fa-code"></i>
-                <h1>LeetCode Tracker</h1>
-                <p>Track your coding progress efficiently</p>
-            </div>
-            
-            <div class="login-form">
-                <h2>Sign In</h2>
-                <div class="form-group">
-                    <label for="username"><i class="fas fa-user"></i> Username</label>
-                    <input type="text" id="username" placeholder="Enter username">
-                </div>
-                <div class="form-group">
-                    <label for="password"><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="password" placeholder="Enter password">
-                </div>
-                <button id="login-btn" class="btn-login">Login</button>
-            </div>
-        </div>
-    </div>
+/* Tab Navigation Styles */
+.tab-navigation {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 
-    <div id="admin-dashboard" class="page hidden">
-        <nav class="navbar">
-            <div class="nav-brand">
-                <i class="fas fa-code"></i>
-                <span>Admin Dashboard</span>
-            </div>
-            <div class="nav-user">
-                <span id="admin-username"></span>
-                <button id="admin-logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            </div>
-        </nav>
+.tab-btn {
+    padding: 1rem 2rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-        <div class="container">
-            <div class="dashboard-header">
-                <h1><i class="fas fa-tasks"></i> Manage LeetCode Questions</h1>
-                <p>Add questions and track user progress</p>
-            </div>
-            
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <h2><i class="fas fa-plus-circle"></i> Add New Question</h2>
-                        <div class="form-group">
-                            <label for="question-name">Question Name</label>
-                            <input type="text" id="question-name" placeholder="e.g., Two Sum">
-                        </div>
-                        <div class="form-group">
-                            <label for="question-link">LeetCode Link</label>
-                            <input type="text" id="question-link" placeholder="https://leetcode.com/problems/two-sum/">
-                        </div>
-                        <div class="form-group">
-                            <label for="question-difficulty">Difficulty</label>
-                            <select id="question-difficulty">
-                                <option value="Easy" selected>Easy</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Hard">Hard</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="question-tags">Tags (comma separated)</label>
-                            <input type="text" id="question-tags" placeholder="Array, Hash Table, Two Pointers">
-                        </div>
-                        <div class="form-group">
-                            <label for="question-video">Topic Video Explanation Link</label>
-                            <input type="text" id="question-video" placeholder="https://youtube.com/... (optional)">
-                        </div>
-                        <div class="form-group">
-                            <label for="question-notes">Topic Notes/Article Link</label>
-                            <input type="text" id="question-notes" placeholder="https://medium.com/... (optional)">
-                        </div>
-                        <div class="form-group">
-                            <label for="question-solution">Question Solution Link</label>
-                            <input type="text" id="question-solution" placeholder="https://github.com/... (optional)">
-                        </div>
-                        <button id="add-question-btn" class="btn-primary">
-                            <i class="fas fa-plus"></i> Add Question
-                        </button>
-                    </div>
+.tab-btn:hover {
+    color: var(--primary-color);
+    background: var(--light-bg);
+}
 
-                    <div class="card">
-                        <h2><i class="fas fa-list"></i> All Questions</h2>
-                        <div id="admin-questions-list" class="questions-list">
-                            <!-- Questions will be added here -->
-                        </div>
-                    </div>
-                </div>
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background: rgba(59, 130, 246, 0.05);
+}
 
-                <div class="col">
-                    <div class="card">
-                        <h2><i class="fas fa-chart-bar"></i> User Progress</h2>
-                        <div id="user-progress">
-                            <!-- User progress will be added here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+.tab-content {
+    display: none;
+    padding: 20px;
+}
 
-    <div id="user-dashboard" class="page hidden">
-        <nav class="navbar">
-            <div class="nav-brand">
-                <i class="fas fa-code"></i>
-                <span>LeetCode Tracker</span>
-            </div>
-            <div class="nav-user">
-                <span id="user-username"></span>
-                <button id="user-logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            </div>
-        </nav>
+.tab-content.active {
+    display: block;
+}
 
-        <!-- Tab Navigation -->
-        <div class="tab-navigation">
-            <button class="tab-btn active" data-tab="dashboard">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </button>
-            <button class="tab-btn" data-tab="questions">
-                <i class="fas fa-tasks"></i> Questions
-            </button>
-            <button class="tab-btn hidden" id="bill-tab-btn" data-tab="bill">
-                <i class="fas fa-calculator"></i> Bill Calculator
-            </button>
-        </div>
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tab-navigation {
+        padding: 0 10px;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .tab-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
 
-        <div class="container">
-            <!-- Dashboard Tab Content -->
-            <div id="dashboard-tab" class="tab-content active">
-                <div class="dashboard-header">
-                    <h1><i class="fas fa-tachometer-alt"></i> My Dashboard</h1>
-                    <p>Track your daily coding progress</p>
-                </div>
 
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <h2><i class="fas fa-calendar-day"></i> Daily Progress Tracker</h2>
-                            
-                            <!-- Today's Progress -->
-                            <div class="today-progress">
-                                <h3><i class="fas fa-sun"></i> Today's Progress</h3>
-                                <div class="form-group">
-                                    <label for="today-count">Questions solved today</label>
-                                    <input type="number" id="today-count" min="0" max="50" value="0" placeholder="0">
-                                    <small>Enter total questions solved today (any source)</small>
-                                </div>
-                                <button id="save-daily-progress" class="btn-primary">
-                                    <i class="fas fa-save"></i> Save Today's Progress
-                                </button>
-                                <p class="today-date"><small>Date: <span id="current-date"></span></small></p>
-                            </div>
+/* Bill Calculator Styles */
+.bill-results {
+    margin-top: 20px;
+}
 
-                            <!-- Stats -->
-                            <div class="progress-stats">
-                                <div class="stat-box">
-                                    <div class="stat-value" id="today-stat">0</div>
-                                    <div class="stat-label">Today</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="streak-stat">0</div>
-                                    <div class="stat-label">Day Streak</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="month-total">0</div>
-                                    <div class="stat-label">This Month</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="all-time">0</div>
-                                    <div class="stat-label">Total</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br><br>
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <h2><i class="fas fa-calendar-alt"></i> Daily Tracker</h2>
-                            <div class="calendar-controls">
-                                <button id="prev-month" class="btn-icon"><i class="fas fa-chevron-left"></i></button>
-                                <h4 id="current-month">January 2026</h4>
-                                <button id="next-month" class="btn-icon"><i class="fas fa-chevron-right"></i></button>
-                            </div>
-                            <div class="calendar-grid" id="calendar-grid">
-                                <!-- Calendar days will be generated here -->
-                            </div>
-                            <div class="streak-info">
-                                <h4><i class="fas fa-fire"></i> Current Streak: <span id="current-streak">0</span> days</h4>
-                                <p id="streak-message">Keep going! Solve at least 1 question daily.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+.bill-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3b82f6;
+}
 
-            <!-- Questions Tab Content -->
-            <div id="questions-tab" class="tab-content">
-                <div class="dashboard-header">
-                    <h1><i class="fas fa-tasks"></i> Questions</h1>
-                    <p>Track and solve LeetCode questions</p>
-                </div>
+.bill-section.summary {
+    background: #e8f5e9;
+    border-left-color: #10b981;
+}
 
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <h2 class="card-title-todo"><i class="fas fa-clock"></i> To Do</h2>
-                            <div id="todo-questions" class="questions-list">
-                                <!-- To-do questions will be added here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br><br>
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <h2 class="card-title-completed"><i class="fas fa-check-circle"></i> Completed</h2>
-                            <div id="completed-questions" class="questions-list">
-                                <!-- Completed questions will be added here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+.bill-section h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
 
-            <!-- Bill Calculator Tab Content - Only for shiwangi -->
-            <div id="bill-tab" class="tab-content">
-                <div class="dashboard-header">
-                    <h1><i class="fas fa-calculator"></i> Bill Calculator</h1>
-                    <p>Calculate and split bills with Nidhi</p>
-                </div>
+.bill-result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
 
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <h2><i class="fas fa-receipt"></i> Bill Input</h2>
-                            
-                            <div class="form-group">
-                                <label for="bill-amount">Total Bill Amount (₹)</label>
-                                <input type="number" id="bill-amount" placeholder="Enter total bill amount" min="0" step="0.01">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="days-nidhi">Days Nidhi was available</label>
-                                <input type="number" id="days-nidhi" placeholder="Enter days Nidhi was there" min="0" max="31">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="days-shiwangi">Days Shiwangi was available</label>
-                                <input type="number" id="days-shiwangi" placeholder="Enter days Shiwangi was there" min="0" max="31">
-                            </div>
-                            
-                            <button id="calculate-bill" class="btn-primary">
-                                <i class="fas fa-calculator"></i> Calculate Bill
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <br><br>
-                
-                <!-- Results Section -->
-                <div class="row hidden" id="bill-results-row">
-                    <div class="col">
-                        <div class="card">
-                            <h2><i class="fas fa-file-invoice-dollar"></i> Bill Calculation Results</h2>
-                            
-                            <div class="bill-results">
-                                <!-- Initial Calculation -->
-                                <div class="bill-section">
-                                    <h3><i class="fas fa-calculator"></i> Initial Calculation</h3>
-                                    <div class="bill-result-item">
-                                        <span>Total Actual Days:</span>
-                                        <span id="actual-days"></span>
-                                    </div>
-                                    <div class="bill-result-item">
-                                        <span>Per Day Rate:</span>
-                                        <span id="per-day-rate"></span>
-                                    </div>
-                                    <div class="bill-result-item">
-                                        <span>Initial Shiwangi Share:</span>
-                                        <span id="initial-shiwangi"></span>
-                                    </div>
-                                    <div class="bill-result-item">
-                                        <span>Initial Nidhi Share:</span>
-                                        <span id="initial-nidhi"></span>
-                                    </div>
-                                    <div class="bill-result-item">
-                                        <span>Shiwangi's Daily Rate:</span>
-                                        <span id="daily-shiwangi"></span>
-                                    </div>
-                                    <div class="bill-result-item">
-                                        <span>Nidhi's Daily Rate:</span>
-                                        <span id="daily-nidhi"></span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Best Average Calculation -->
-                                <div class="bill-section">
-                                    <h3><i class="fas fa-balance-scale"></i> Best Average Calculation</h3>
-                                    <div class="bill-result-item">
-                                        <span>Best Daily Average:</span>
-                                        <span id="best-average"></span>
-                                    </div>
-                                    <div class="bill-result-item">
-                                        <span>Final Shiwangi Share:</span>
-                                        <span id="final-shiwangi"></span>
-                                    </div>
-                                    <div class="bill-result-item">
-                                        <span>Final Nidhi Share:</span>
-                                        <span id="final-nidhi"></span>
-                                    </div>
-                                    <div class="bill-result-item highlight">
-                                        <span>Total Check:</span>
-                                        <span id="total-check"></span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Summary -->
-                                <div class="bill-section summary">
-                                    <h3><i class="fas fa-file-invoice"></i> Final Bill Summary</h3>
-                                    <div class="bill-final-summary">
-                                        <div class="final-amount">
-                                            <span>Shiwangi pays:</span>
-                                            <span class="amount" id="summary-shiwangi"></span>
-                                        </div>
-                                        <div class="final-amount">
-                                            <span>Nidhi pays:</span>
-                                            <span class="amount" id="summary-nidhi"></span>
-                                        </div>
-                                        <div class="final-amount total">
-                                            <span>Total Bill:</span>
-                                            <span class="amount" id="summary-total"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="bill-actions">
-                                <button id="download-bill-pdf" class="btn-primary">
-                                    <i class="fas fa-download"></i> Download Bill as PDF
-                                </button>
-                                <button id="reset-bill" class="btn-secondary">
-                                    <i class="fas fa-redo"></i> Reset Calculator
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+.bill-result-item:last-child {
+    border-bottom: none;
+}
 
-    <script type="module" src="firebase-config.js"></script>
-    <script type="module" src="script.js"></script>
-</body>
-</html>
+.bill-result-item.highlight {
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    border: 1px solid #ffecb5;
+}
+
+.bill-final-summary {
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.final-amount {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.final-amount:last-child {
+    border-bottom: none;
+}
+
+.final-amount.total {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 2px solid #3b82f6;
+}
+
+.final-amount .amount {
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.final-amount.total .amount {
+    color: #10b981;
+}
+
+.bill-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .bill-actions {
+        flex-direction: column;
+    }
+    
+    .bill-result-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .final-amount {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* Desktop view - make calendar days smaller */
+@media (min-width: 769px) {
+    .calendar-grid {
+        max-width: 700px;
+        margin: 0 auto;
+        gap: 0.4rem;
+    }
+
+    .calendar-day {
+        aspect-ratio: auto;
+        height: 70px;
+        font-size: 0.8rem;
+        padding: 0.2rem;
+    }
+
+    .day-number {
+        font-size: 0.85rem;
+        margin-bottom: 0.15rem;
+    }
+
+    .day-count {
+        font-size: 0.7rem;
+    }
+}
+
+.time-separator {
+    color: white;
+    font-weight: 600;
+}
+
+/* Timetable Styles */
+.timetable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.timetable-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Edit Mode Toggle */
+.edit-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: .4s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+}
+
+input:checked + .toggle-switch .toggle-slider {
+    background-color: #10b981;
+}
+
+input:checked + .toggle-switch .toggle-slider:before {
+    transform: translateX(30px);
+}
+
+.toggle-label {
+    margin-left: 5px;
+    font-weight: 500;
+    font-size: x-small;
+    color: var(--dark-color);
+}
+
+/* Timetable Table */
+.timetable-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.timetable-table th {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.timetable-table th.day-header {
+    background: #1e40af;
+    min-width: 120px;
+    z-index: 20;
+}
+
+.timetable-table th.action-header {
+    background: #6b7280;
+    min-width: 120px;
+}
+
+.timetable-table td {
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    min-height: 70px;
+    min-width: 150px;
+    vertical-align: top;
+    position: relative;
+}
+
+/* Day cells (first column) */
+.day-cell {
+    background: #f8fafc !important;
+    font-weight: 600;
+    text-align: center;
+    z-index: 5;
+    border-right: 2px solid #d1d5db;
+}
+
+/* Empty timetable */
+.empty-timetable {
+    text-align: center;
+    padding: 3rem !important;
+    background: #f8fafc;
+}
+
+.empty-state {
+    color: #6b7280;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0.5rem 0;
+}
+
+/* Time slot row */
+
+.timeslot-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.time-range {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.timeslot-row td {
+    background: white;
+    transition: background 0.2s;
+}
+
+.timeslot-row:hover td {
+    background: #f8fafc;
+}
+
+/* Time cell */
+.time-cell {
+    background: #f8fafc !important;
+    font-weight: 500;
+    text-align: center;
+}
+
+.time-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.time-inputs input {
+    width: 80px;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.time-inputs input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.time-display {
+    font-size: 0.9rem;
+    color: #4b5563;
+    font-weight: 500;
+    align-items: center;
+}
+
+/* Subject cell */
+.subject-cell {
+    min-height: 70px;
+    cursor: pointer;
+    position: relative;
+}
+
+.subject-cell:hover {
+    background: #e0f2fe !important;
+}
+
+.subject-display {
+    font-size: 0.9rem;
+    color: #1f2937;
+    line-height: 1.4;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem;
+    word-break: break-word;
+}
+
+.subject-name {
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.subject-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    background: white;
+    z-index: 10;
+    position: relative;
+}
+
+.subject-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Action buttons */
+.action-cell {
+    text-align: center;
+    background: #f8fafc !important;
+}
+
+.remove-slot-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.remove-slot-btn:hover {
+    background: #dc2626;
+}
+
+.remove-slot-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.remove-timeslot-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.3s;
+}
+
+.remove-timeslot-btn:hover {
+    background: #dc2626;
+}
+
+.remove-timeslot-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Timetable Stats */
+.timetable-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* View mode styles */
+.timetable-table.view-mode td {
+    cursor: default;
+}
+
+.timetable-table.view-mode .subject-cell:hover {
+    background: inherit !important;
+}
+
+.timetable-table.view-mode .time-inputs input {
+    border: none;
+    background: transparent;
+    pointer-events: none;
+}
+
+.timetable-table.view-mode .subject-input {
+    border: none;
+    background: transparent;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Days of week colors for first column */
+.day-cell.monday { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important; }
+.day-cell.tuesday { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%) !important; }
+.day-cell.wednesday { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important; }
+.day-cell.thursday { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important; }
+.day-cell.friday { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important; }
+.day-cell.saturday { background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%) !important; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .timetable-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .timetable-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .timetable-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .time-inputs {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .time-inputs input {
+        width: 70px;
+    }
+}

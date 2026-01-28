@@ -20,6 +20,7 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     color: var(--dark-color);
+    overflow-x: hidden;
 }
 
 .page {
@@ -124,24 +125,6 @@ body {
     background: var(--secondary-color);
 }
 
-.credentials-hint {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: #f3f4f6;
-    border-radius: 8px;
-    border-left: 4px solid var(--primary-color);
-}
-
-.credentials-hint h4 {
-    margin-bottom: 0.5rem;
-    color: var(--dark-color);
-}
-
-.credentials-hint p {
-    margin-bottom: 0.25rem;
-    font-size: 0.9rem;
-}
-
 /* Navbar */
 .navbar {
     background: white;
@@ -222,7 +205,7 @@ body {
 /* Cards */
 .row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
 }
 
@@ -231,6 +214,8 @@ body {
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow);
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 .card h2 {
@@ -475,20 +460,6 @@ body {
 .form-group select:focus {
     outline: none;
     border-color: var(--primary-color);
-}
-
-/* Real-time indicator */
-.realtime-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--success-color);
-    margin-left: 1rem;
-}
-
-.realtime-indicator i {
-    animation: pulse 2s infinite;
 }
 
 /* Additional Resources Section */
@@ -781,12 +752,6 @@ body {
     color: #ea580c !important;
 }
 
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
@@ -1012,5 +977,379 @@ body {
 
     .day-count {
         font-size: 0.7rem;
+    }
+}
+
+.time-separator {
+    color: white;
+    font-weight: 600;
+}
+
+/* Timetable Styles */
+.timetable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.timetable-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Edit Mode Toggle */
+.edit-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: .4s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+}
+
+input:checked + .toggle-switch .toggle-slider {
+    background-color: #10b981;
+}
+
+input:checked + .toggle-switch .toggle-slider:before {
+    transform: translateX(30px);
+}
+
+.toggle-label {
+    margin-left: 5px;
+    font-weight: 500;
+    font-size: x-small;
+    color: var(--dark-color);
+}
+
+/* Timetable Table */
+.timetable-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.timetable-table th {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.timetable-table th.day-header {
+    background: #1e40af;
+    min-width: 120px;
+    z-index: 20;
+}
+
+.timetable-table th.action-header {
+    background: #6b7280;
+    min-width: 120px;
+}
+
+.timetable-table td {
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    min-height: 70px;
+    min-width: 150px;
+    vertical-align: top;
+    position: relative;
+}
+
+/* Day cells (first column) */
+.day-cell {
+    background: #f8fafc !important;
+    font-weight: 600;
+    text-align: center;
+    z-index: 5;
+    border-right: 2px solid #d1d5db;
+}
+
+/* Empty timetable */
+.empty-timetable {
+    text-align: center;
+    padding: 3rem !important;
+    background: #f8fafc;
+}
+
+.empty-state {
+    color: #6b7280;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0.5rem 0;
+}
+
+/* Time slot row */
+
+.timeslot-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.time-range {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.timeslot-row td {
+    background: white;
+    transition: background 0.2s;
+}
+
+.timeslot-row:hover td {
+    background: #f8fafc;
+}
+
+/* Time cell */
+.time-cell {
+    background: #f8fafc !important;
+    font-weight: 500;
+    text-align: center;
+}
+
+.time-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.time-inputs input {
+    width: 80px;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.time-inputs input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.time-display {
+    font-size: 0.9rem;
+    color: #4b5563;
+    font-weight: 500;
+    align-items: center;
+}
+
+/* Subject cell */
+.subject-cell {
+    min-height: 70px;
+    cursor: pointer;
+    position: relative;
+}
+
+.subject-cell:hover {
+    background: #e0f2fe !important;
+}
+
+.subject-display {
+    font-size: 0.9rem;
+    color: #1f2937;
+    line-height: 1.4;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem;
+    word-break: break-word;
+}
+
+.subject-name {
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.subject-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    background: white;
+    z-index: 10;
+    position: relative;
+}
+
+.subject-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Action buttons */
+.action-cell {
+    text-align: center;
+    background: #f8fafc !important;
+}
+
+.remove-slot-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.remove-slot-btn:hover {
+    background: #dc2626;
+}
+
+.remove-slot-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.remove-timeslot-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.3s;
+}
+
+.remove-timeslot-btn:hover {
+    background: #dc2626;
+}
+
+.remove-timeslot-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Timetable Stats */
+.timetable-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* View mode styles */
+.timetable-table.view-mode td {
+    cursor: default;
+}
+
+.timetable-table.view-mode .subject-cell:hover {
+    background: inherit !important;
+}
+
+.timetable-table.view-mode .time-inputs input {
+    border: none;
+    background: transparent;
+    pointer-events: none;
+}
+
+.timetable-table.view-mode .subject-input {
+    border: none;
+    background: transparent;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Days of week colors for first column */
+.day-cell.monday { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important; }
+.day-cell.tuesday { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%) !important; }
+.day-cell.wednesday { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important; }
+.day-cell.thursday { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important; }
+.day-cell.friday { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important; }
+.day-cell.saturday { background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%) !important; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .timetable-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .timetable-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .timetable-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .time-inputs {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .time-inputs input {
+        width: 70px;
     }
 }

@@ -1087,6 +1087,10 @@ function initTabNavigation() {
             if (tabId === 'dashboard' && currentUserName) {
                 initDailyProgress(currentUserName);
             }
+
+            if (tabId === 'timetable' && currentUserName) {
+                initTimetable(currentUserName);
+            }
         });
     });
 }
@@ -1094,8 +1098,15 @@ function initTabNavigation() {
 // Bill Calculator Functionality
 function initBillCalculator() {
     // Only show bill tab if user is shiwangi
+
     if (currentUserName === 'shiwangi') {
         document.getElementById('bill-tab-btn').classList.remove('hidden');
+    } else {
+        document.getElementById('bill-tab-btn').classList.add('hidden');
+        
+        if (document.getElementById('bill-tab-btn').classList.contains('active')) {
+            document.querySelector('.tab-btn[data-tab="dashboard"]').click();
+        }
     }
     
     // Calculate Bill Button
@@ -1348,6 +1359,474 @@ async function downloadBillPDF() {
     doc.save(fileName);
 }
 
+
+// Timetable variables
+let timetableRef;
+let isEditMode = false;
+let timeSlotCounter = 1;
+let timetableData = {
+    timeSlots: [] 
+};
+
+// Days of the week (static)
+const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// Initialize timetable
+function initTimetable(username) {
+    timetableRef = db.ref('timetable/' + username);
+    
+    // Load timetable data from Firebase
+    loadTimetable(username);
+    
+    // Setup event listeners
+    setupTimetableListeners(username);
+}
+
+// Load timetable from Firebase
+function loadTimetable(username) {
+    timetableRef.once('value')
+        .then(snapshot => {
+            const data = snapshot.val();
+            if (data && data.timeSlots && data.timeSlots.length > 0) {
+                timetableData = data;
+                timeSlotCounter = Math.max(...timetableData.timeSlots.map(slot => slot.id)) + 1;
+                renderTimetable();
+            } else {
+                // Initialize empty timetable
+                timetableData = { timeSlots: [] };
+                timeSlotCounter = 1;
+                renderEmptyTimetable();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading timetable:', error);
+            timetableData = { timeSlots: [] };
+            timeSlotCounter = 1;
+            renderEmptyTimetable();
+        });
+}
+
+// Render empty timetable
+function renderEmptyTimetable() {
+    const tbody = document.getElementById('timetable-body');
+    const thead = document.getElementById('timetable-header');
+    
+    // Clear table
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
+    
+    // Add day header
+    const headerRow = document.createElement('tr');
+    const dayHeader = document.createElement('th');
+    dayHeader.className = 'day-header';
+    dayHeader.textContent = 'Day';
+    headerRow.appendChild(dayHeader);
+    thead.appendChild(headerRow);
+    
+    // Add empty message row
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="1" class="empty-timetable">
+                <div class="empty-state">
+                    <i class="fas fa-calendar-plus"></i>
+                    <p>No time slots added yet</p>
+                    <p>Click "Add Time Slot" to create your first schedule</p>
+                </div>
+            </td>
+        </tr>
+    `;
+    
+    updateTimetableStats();
+}
+
+// Convert 24-hour format to 12-hour format with AM/PM (simple version)
+function formatTimeDisplay(time24) {
+    if (!time24 || time24 === '--:--') return '--:--';
+    
+    try {
+        // Split the time
+        const [hours, minutes] = time24.split(':').map(Number);
+        
+        // Determine AM/PM
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        
+        // Convert to 12-hour format
+        let hours12 = hours % 12;
+        if (hours12 === 0) hours12 = 12;
+        
+        // Return formatted time
+        return `${hours12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    } catch (error) {
+        return time24; // Return original if conversion fails
+    }
+}
+
+// Render timetable with data
+function renderTimetable() {
+    const tbody = document.getElementById('timetable-body');
+    const thead = document.getElementById('timetable-header');
+
+    if (timetableData.timeSlots.length === 0) {
+        renderEmptyTimetable();
+        return;
+    }
+    
+    // Clear table
+    tbody.innerHTML = '';
+    thead.innerHTML = '';
+    
+    // Sort time slots by start time
+    timetableData.timeSlots.sort((a, b) => {
+        const timeA = a.startTime || "00:00";
+        const timeB = b.startTime || "00:00";
+        return timeA.localeCompare(timeB);
+    });
+    
+    // ====== CREATE TABLE HEADER ======
+    const headerRow = document.createElement('tr');
+
+    // Day header
+    const dayHeader = document.createElement('th');
+    dayHeader.className = 'day-header';
+    dayHeader.textContent = 'Day';
+    headerRow.appendChild(dayHeader);
+
+    // Render each time slot
+    timetableData.timeSlots.forEach((slot, index) => {
+        const timeSlotHeader = document.createElement('th');
+        timeSlotHeader.className = 'timeslot-header-cell';
+        timeSlotHeader.dataset.slotId = slot.id;
+        
+         if (isEditMode) {
+        timeSlotHeader.innerHTML = `
+            <div class="timeslot-header">
+                <div class="time-inputs-header">
+                    <input type="time" class="header-start-time" value="${slot.startTime || ''}" 
+                           placeholder="Start time">
+                    <span class="time-separator">to</span>
+                    <input type="time" class="header-end-time" value="${slot.endTime || ''}" 
+                           placeholder="End time">
+                </div>
+                <button class="remove-timeslot-btn" data-slot-id="${slot.id}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        }
+        else{
+            timeSlotHeader.innerHTML = `
+                <div class="timeslot-header">
+                    <span class="time-range">${formatTimeDisplay(slot.startTime) || '--:--'} to ${formatTimeDisplay(slot.endTime) || '--:--'}</span>
+                </div>
+            `;
+        }
+
+        headerRow.appendChild(timeSlotHeader);
+    });
+
+    thead.appendChild(headerRow);
+
+    // ====== CREATE TABLE BODY (6 static rows) ======
+    daysOfWeek.forEach(day => {
+        const row = document.createElement('tr');
+        
+        // Day cell (first column)
+        const dayCell = document.createElement('td');
+        dayCell.className = `day-cell ${day.toLowerCase()}`;
+        dayCell.textContent = day;
+        row.appendChild(dayCell);
+        
+        // Subject cells for each time slot
+        timetableData.timeSlots.forEach(slot => {
+            const subject = slot.subjects && slot.subjects[day] ? slot.subjects[day] : '';
+            const subjectCell = document.createElement('td');
+            subjectCell.className = 'subject-cell';
+            subjectCell.dataset.day = day;
+            subjectCell.dataset.slotId = slot.id;
+            
+            if (isEditMode) {
+                subjectCell.innerHTML = `
+                    <input type="text" class="subject-input" 
+                           placeholder="Add subject..." 
+                           value="${subject}"
+                           maxlength="100">
+                `;
+            } else {
+                subjectCell.innerHTML = `
+                    <div class="subject-display">
+                        <div class="subject-name">${subject || ''}</div>
+                    </div>
+                `;
+            }
+            
+            row.appendChild(subjectCell);
+        });
+        
+        tbody.appendChild(row);
+    });
+    
+    // Add event listeners
+    addTimetableEventListeners();
+    updateTimetableStats();
+}
+
+// Add event listeners to timetable elements
+function addTimetableEventListeners() {
+    // Subject input changes
+    document.querySelectorAll('.subject-input').forEach(input => {
+        input.addEventListener('input', function() {
+            const cell = this.closest('.subject-cell');
+            const slotId = parseInt(cell.dataset.slotId);
+            const day = cell.dataset.day;
+            
+            updateSubject(slotId, day, this.value);
+            
+            // Enable save button
+            document.getElementById('save-timetable').disabled = false;
+            
+            // Update stats
+            updateTimetableStats();
+        });
+    });
+    
+    // Header time input changes (NEW!)
+    document.querySelectorAll('.header-start-time, .header-end-time').forEach(input => {
+        input.addEventListener('change', function() {
+            const headerCell = this.closest('th');
+            const slotId = parseInt(headerCell.dataset.slotId);
+            const isStartTime = this.classList.contains('header-start-time');
+            
+            // Update the time slot
+            updateTimeSlot(slotId, isStartTime ? 'startTime' : 'endTime', this.value);
+            
+            // Enable save button
+            document.getElementById('save-timetable').disabled = false;
+            
+            // Update the display in the header (if we're in edit mode, it already shows the inputs, 
+            // but we might want to update a separate display or just let the inputs show the values)
+        });
+    });
+    
+    // Remove time slot buttons (in header)
+    document.querySelectorAll('.remove-timeslot-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const slotId = parseInt(this.dataset.slotId);
+            removeTimeSlot(slotId);
+            
+            // Enable save button
+            document.getElementById('save-timetable').disabled = false;
+        });
+    });
+}
+
+// Update time slot data
+function updateTimeSlot(slotId, field, value) {
+    const slot = timetableData.timeSlots.find(s => s.id === slotId);
+    if (slot) {
+        slot[field] = value;
+        
+        // Re-sort time slots to maintain chronological order
+        timetableData.timeSlots.sort((a, b) => {
+            const timeA = a.startTime || "00:00";
+            const timeB = b.startTime || "00:00";
+            return timeA.localeCompare(timeB);
+        });
+        
+        // Re-render to update order and displays
+        renderTimetable();
+    }
+}
+
+// Update subject data
+function updateSubject(slotId, day, subject) {
+    const slot = timetableData.timeSlots.find(s => s.id === slotId);
+    if (slot) {
+        if (!slot.subjects) {
+            slot.subjects = {};
+        }
+        slot.subjects[day] = subject.trim();
+    }
+}
+
+// Remove time slot
+function removeTimeSlot(slotId) {
+    timetableData.timeSlots = timetableData.timeSlots.filter(s => s.id !== slotId);
+    renderTimetable();
+}
+
+// Add new time slot (new column)
+function addNewTimeSlot() {
+    const newSlot = {
+        id: timeSlotCounter++,
+        startTime: "09:00",
+        endTime: "10:00",
+        subjects: {}
+    };
+    
+    timetableData.timeSlots.push(newSlot);
+    renderTimetable();
+    
+    // Enable save button
+    document.getElementById('save-timetable').disabled = false;
+    
+    // Scroll horizontally to the new column
+    const container = document.querySelector('.timetable-container');
+    container.scrollLeft = container.scrollWidth;
+}
+
+// Add CSS for header time inputs
+const style = document.createElement('style');
+style.textContent = `
+    .time-inputs-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .time-inputs-header input {
+        width: 80px;
+        padding: 0.25rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 0.8rem;
+    }
+    
+    .time-inputs-header input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .time-separator {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin: 0.1rem 0;
+    }
+    
+    .time-range {
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+`;
+document.head.appendChild(style);
+
+// Update timetable statistics
+function updateTimetableStats() {
+    const totalSlots = timetableData.timeSlots.length;
+    let filledSubjects = 0;
+    let totalSubjects = 0;
+    
+    timetableData.timeSlots.forEach(slot => {
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        totalSubjects += days.length;
+        if (slot.subjects) {
+            days.forEach(day => {
+                if (slot.subjects[day] && slot.subjects[day].trim() !== '') {
+                    filledSubjects++;
+                }
+            });
+        }
+    });
+    
+    document.getElementById('total-slots').textContent = totalSlots;
+    document.getElementById('filled-slots').textContent = filledSubjects;
+    
+    const emptyPercentage = totalSubjects > 0 ? 
+        Math.round(((totalSubjects - filledSubjects) / totalSubjects) * 100) : 100;
+    document.getElementById('empty-slots').textContent = `${emptyPercentage}%`;
+}
+
+// Setup timetable event listeners
+function setupTimetableListeners(username) {
+    // Edit mode toggle
+    const editToggle = document.getElementById('edit-mode-toggle');
+    editToggle.addEventListener('change', () => {
+        isEditMode = editToggle.checked;
+        
+        // Enable/disable save button
+        document.getElementById('save-timetable').disabled = !isEditMode;
+        document.getElementById('save-timetable').style.display = isEditMode ? 'flex' : 'none';
+
+        // Show/hide add button
+        document.getElementById('add-timeslot').style.display = isEditMode ? 'flex' : 'none';
+        
+        // Show/hide remove buttons
+        document.querySelectorAll('.remove-slot-btn').forEach(btn => {
+            btn.disabled = !isEditMode;
+        });
+        
+        // Re-render timetable with appropriate mode
+        if (timetableData.timeSlots.length === 0) {
+            renderEmptyTimetable();
+        } else {
+            renderTimetable();
+        }
+    });
+    
+    // Add time slot button
+    document.getElementById('add-timeslot').addEventListener('click', addNewTimeSlot);
+    
+    // Save timetable button
+    document.getElementById('save-timetable').addEventListener('click', () => {
+        saveTimetable(username);
+    });
+    
+    // Clear timetable button
+    document.getElementById('clear-timetable').addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear the entire timetable? This cannot be undone.')) {
+            timetableData.timeSlots = [];
+            timeSlotCounter = 1;
+            renderEmptyTimetable();
+            document.getElementById('save-timetable').disabled = false;
+            showToast('Timetable cleared', 'success');
+        }
+    });
+}
+
+// Save timetable to Firebase
+function saveTimetable(username) {
+    if (!timetableRef) return;
+    
+    // Sort time slots by start time before saving
+    timetableData.timeSlots.sort((a, b) => {
+        const timeA = a.startTime || "00:00";
+        const timeB = b.startTime || "00:00";
+        return timeA.localeCompare(timeB);
+    });
+    
+    timetableRef.set(timetableData)
+        .then(() => {
+            showToast('Timetable saved successfully!', 'success');
+            document.getElementById('save-timetable').disabled = true;
+        })
+        .catch(error => {
+            console.error('Error saving timetable:', error);
+            showToast('Error saving timetable', 'error');
+        });
+}
+
+// Initialize timetable tab for all users
+function initTimetableTab(username) {
+    const timetableTabBtn = document.getElementById('timetable-tab-btn');
+
+        document.getElementById('save-timetable').disabled = true;
+        document.getElementById('save-timetable').style.display = 'none';
+        document.getElementById('add-timeslot').style.display = 'none';
+
+
+    if (timetableTabBtn) {
+        timetableTabBtn.style.display = 'flex';
+        timetableTabBtn.addEventListener('click', () => {
+            if (currentUserName) {
+                initTimetable(currentUserName);
+            }
+        });
+    }
+}
+
 // Show/Hide functions (same as before)
 function showLoginPage() {
     loginPage.classList.remove('hidden');
@@ -1375,6 +1854,14 @@ function showUserDashboard(username) {
     setTimeout(() => {
         initTabNavigation();
         initBillCalculator(); // Initialize bill calculator
+        initTimetableTab(username);
+
+        // Make timetable default for shiwangi
+        if (username === 'shiwangi') {
+            document.querySelector('.tab-btn[data-tab="timetable"]').click();
+        } else {
+            document.querySelector('.tab-btn[data-tab="dashboard"]').click();
+        }
     }, 100);
 }
 
